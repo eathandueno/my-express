@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node server.js"
   },
-  "name": "my-express",
+  "name": "gpt-express",
   "version": "1.0.0",
   "description": "lightweight express server",
   "main": "server.js",

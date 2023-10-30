@@ -1,8 +1,11 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import OpenAI from 'openai';
-
+// import express from 'express';
+const express = require('express');
+// import dotenv from 'dotenv';
+const dotenv = require('dotenv');
+// import cors from 'cors';
+const cors = require('cors');
+// import OpenAI from 'openai';
+const OpenAI = require('openai');
 const app = express();
 const port = 3001;
 const openai = new OpenAI({apiKey:process.env.OPENAI_API_KEY})
@@ -14,7 +17,7 @@ app.post('/generate', async (req, res) => {
     try {
         const topic = req.body;
         const completion = await openai.chat.completions.create({
-            messages: [{"role":"user","content":topic}],
+            messages: [{"role":"system","content":"Based on the users decisions make the executive decision of which marketing plan fits their needs best."},{"role":"user","content":`The users decisions concluded to the following: ${topic}`}],
             model: "gpt-3.5-turbo"
         });
         const response = completion.choices[0].message.content;
