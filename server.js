@@ -14,51 +14,8 @@ dotenv.config()
 app.use(cors());
 app.use(express.json());
 
-app.post('/generate', async (req, res) => {
-    try {
-        const topic = req.body;
-        const completion = await openai.chat.completions.create({
-            messages: [{"role":"system","content":"Based on the users decisions make the executive decision of which marketing plan fits their needs best."},{"role":"user","content":`The users decisions concluded to the following: ${topic}`}],
-            model: "gpt-3.5-turbo"
-        });
-        const response = completion.choices[0].message.content;
-        res.json({message: response})
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({error: 'Something went wrong'})
-    }
-})
-// Function to read a JSON file
-// const readJsonFile = (filePath) => {
-//     const rawData = fs.readFileSync(filePath);
-//     return JSON.parse(rawData);
-//   };
-  
-//   // Function to consolidate plans
-//   const consolidatePlans = () => {
-//     try {
-//       const nationalSeo = readJsonFile('./assets/national_seo.json');
-//       const partnerPlans = readJsonFile('./assets/partners.json');
-//       const socialMedia = readJsonFile('./assets/social_media_management.json');
-//       const webManagement = readJsonFile('./assets/web_management.json');
-//       const webTraffic = readJsonFile('./assets/web_traffic_management.json');
-//       const localSeo = readJsonFile('./assets/local_seo.json');
-//       // ... read other JSON files
-  
-//       // Consolidate all plans
-//       return [
-//         ...nationalSeo.map(plan => ({ ...plan, serviceType: 'National SEO' })),
-//         ...partnerPlans.map(plan => ({ ...plan, serviceType: 'Partner Plan' })),
-//         ...socialMedia.map(plan => ({...plan, serviceType: 'Social Media Management'})),
-//         ...webManagement.map(plan => ({...plan, serviceType: 'Web Site Management'})),
-//         ...webTraffic.map(plan => ({...plan, serviceType: 'Web Traffic Management'})),
-//         ...localSeo.map(plan => ({...plan, serviceType: 'Local SEO'}))
-//       ];
-//     } catch (error) {
-//       console.error(error);
-//       throw new Error('Something went wrong');
-//     }
-//   };
+
+
 const readJsonFile = (filePath) => {
     try {
       const rawData = fs.readFileSync(filePath);
@@ -111,9 +68,10 @@ const readJsonFile = (filePath) => {
 
   app.post('/completed-form', async (req, res) => {
     try {
+      console.log(req)
       // Get the user's decisions from the request body
-      const userDecisions = req.body;
-  
+      const userDecisions = req.body.pref;
+      console.log(`attempting to log ${userDecisions}`)
       // Get the consolidated plans
       const allPlans = consolidatePlans();
   
@@ -121,7 +79,7 @@ const readJsonFile = (filePath) => {
       const systemMessage = "Based on the users' decisions, make the executive decision of which marketing plan fits their needs best.";
       const userMessage = `The users' decisions concluded to the following: ${JSON.stringify(userDecisions)}`;
       const plansMessage = `Here are the available plans: ${JSON.stringify(allPlans)}`;
-  
+      console.log(userMessage)
       // Generate the response from OpenAI
       const completion = await openai.chat.completions.create({
         messages: [
