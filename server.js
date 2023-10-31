@@ -64,20 +64,53 @@ const readJsonFile = (filePath) => {
     }
   };
   // Route to get consolidated plans
-
+  const buildUserMessage = (userDecisions) => {
+    let messageParts = [];
+  
+    // Conditionally add parts to the message
+    if (userDecisions.selectedDiagnosis) {
+      messageParts.push(`Our first focus is ${userDecisions.selectedDiagnosis}`);
+    }
+    if (userDecisions.objective) {
+      messageParts.push(`our objective is to ${userDecisions.objective}`);
+    }
+    if (userDecisions.d1) {
+      messageParts.push(`My business is different than others because of ${userDecisions.d1}`);
+    }
+    if (userDecisions.d2) {
+      messageParts.push(`Our unique value proposition is ${userDecisions.body.d1}`);
+    }
+    if (userDecisions.l1) {
+      messageParts.push(`our major cost drivers are ${userDecisions.l1}`);
+    }
+    if (userDecisions.l2) {
+      messageParts.push(`Our cost-saving measure is ${userDecisions.l2}`);
+    }
+    if (userDecisions.t1) {
+      messageParts.push(`Our target audience is ${userDecisions.t1}`);
+    }
+    if (userDecisions.t2) {
+      messageParts.push(`The channels that have been most effictive are ${userDecisions.t2}`);
+    }
+    if (userDecisions.budget) {
+      messageParts.push(`Most importantly our budget is ${userDecisions.budget}`);
+    }
+    return `The users' decisions concluded to the following: ${messageParts.join(', ')}`;
+  }
+  
 
   app.post('/completed-form', async (req, res) => {
     try {
-      console.log(req)
+      console.log(req.body)
       // Get the user's decisions from the request body
-      const userDecisions = req.body.pref;
+      const userDecisions = req.body;
       console.log(`attempting to log ${userDecisions}`)
       // Get the consolidated plans
       const allPlans = consolidatePlans();
   
       // Create the message for OpenAI API
       const systemMessage = "Based on the users' decisions, make the executive decision of which marketing plan fits their needs best.";
-      const userMessage = `The users' decisions concluded to the following: ${JSON.stringify(userDecisions)}`;
+      const userMessage = buildUserMessage(userDecisions);
       const plansMessage = `Here are the available plans: ${JSON.stringify(allPlans)}`;
       console.log(userMessage)
       // Generate the response from OpenAI
